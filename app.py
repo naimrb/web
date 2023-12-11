@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request
+from flask import Flask, request, render_template
 from lib.database_connection import get_flask_database_connection
 from lib.artist_repository import ArtistRepository
 
@@ -17,7 +17,7 @@ def get_artists():
         for i in artists:
             names.append(i.name)
         
-        return ', '.join(names)
+        return render_template('artists.html', artists=artists)
     
     if request.method == "POST":
         name = request.form['name']
@@ -28,6 +28,12 @@ def get_artists():
         
         return ""
         
+@app.route('/artists/<id>', methods=['GET'])
+def get_artists_id(id):
+    repo = ArtistRepository(get_flask_database_connection(app))
+    artist = repo.find(id)
+
+    return render_template('id.html', id=id, artist=artist)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
