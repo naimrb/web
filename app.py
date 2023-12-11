@@ -1,35 +1,33 @@
 import os
 from flask import Flask, request
+from lib.database_connection import get_flask_database_connection
+from lib.artist_repository import ArtistRepository
 
 # Create a new Flask app
 app = Flask(__name__)
 
 # == Your Routes Here ==
 
-# == Example Code Below ==
+@app.route('/artists', methods=['GET', 'POST'])
+def get_artists():
+    if request.method == "GET":
+        repo = ArtistRepository(get_flask_database_connection(app))
+        artists = repo.all()
+        names = []
+        for i in artists:
+            names.append(i.name)
+        
+        return ', '.join(names)
+    
+    if request.method == "POST":
+        name = request.form['name']
+        genre = request.form['genre']
 
-# GET /emoji
-# Returns a emojiy face
-# Try it:
-#   ; curl http://127.0.0.1:5001/emoji
-@app.route('/emoji', methods=['GET'])
-def get_emoji():
-    return ":)"
-
-
-@app.route('/names', methods=['GET'])
-def get_names():
-    name = request.args.get('add')
-    name_list = ["Julia", "Alice", "Karim"]
-    name_list.append(name)
-    return ', '.join(name_list)
-
-# This imports some more example routes for you to see how they work
-# You can delete these lines if you don't need them.
-from example_routes import apply_example_routes
-apply_example_routes(app)
-
-# == End Example Code ==
+        repo = ArtistRepository(get_flask_database_connection(app))
+        repo.insert(name, genre)
+        
+        return ""
+        
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database

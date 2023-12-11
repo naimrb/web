@@ -1,17 +1,14 @@
 # Tests for your routes go here
 
-# === Example Code Below ===
-
-"""
-GET /emoji
-"""
-def test_get_emoji(web_client):
-    response = web_client.get("/emoji")
+def test_route_artist_get(web_client):
+    response = web_client.get('/artists')
     assert response.status_code == 200
-    assert response.data.decode("utf-8") == ":)"
+    assert response.data.decode('utf-8') == "Pixies, ABBA, Taylor Swift, Nina Simone"
 
-def test_get_names(web_client):
-    response = web_client.get("/names?add=Eddie")
+def test_route_artist_post(web_client):
+    response = web_client.post('/artists', data = {'name': 'Wild nothing', 'genre': 'Indie'})
     assert response.status_code == 200
-    assert response.data.decode("utf-8") == "Julia, Alice, Karim, Eddie"
-# === End Example Code ===
+    
+    response = web_client.get('/artists')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == "Pixies, ABBA, Taylor Swift, Nina Simone, Wild nothing"
